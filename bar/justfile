@@ -1,0 +1,18 @@
+## bar's own justfile — has a custom `serve` recipe not in the root justfile
+set dotenv-load := true
+set shell := ['uv', 'run', 'bash', '-euxo', 'pipefail', '-c']
+set positional-arguments
+
+[no-cd]
+lint:
+    ruff format --check --diff .
+    ruff check .
+
+[no-cd]
+test *args:
+    pytest -q -s "$@"
+
+# Custom recipe: serve the coverage report locally
+serve:
+    coverage html
+    python -m http.server 0 --bind localhost --directory htmlcov
